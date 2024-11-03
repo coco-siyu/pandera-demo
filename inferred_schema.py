@@ -5,7 +5,7 @@ schema = DataFrameSchema(
         "userid": Column(
             dtype="int64",
             checks=[
-                Check.greater_than_or_equal_to(min_value=12345.0),
+                Check.greater_than_or_equal_to(min_value=112347.0),
                 Check.less_than_or_equal_to(max_value=978532.0),
             ],
             nullable=False,
@@ -31,7 +31,7 @@ schema = DataFrameSchema(
             dtype="float64",
             checks=[
                 Check.greater_than_or_equal_to(min_value=1.1),
-                Check.less_than_or_equal_to(max_value=6.3),
+                Check.less_than_or_equal_to(max_value=5.0),
             ],
             nullable=False,
             unique=False,

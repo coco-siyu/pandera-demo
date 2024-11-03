@@ -2,12 +2,16 @@ import pandera as pa
 from pandera.typing import Series
 import pandas as pd
 from pathlib import Path
+
 # Define the schema with correct data types
 schema = pa.DataFrameSchema({
     "userid": pa.Column(
-        int
+        int,
+        checks=[
+            pa.Check(lambda x: x.astype(str).str.len() == 6, 
+                    error="UserID must be exactly 6 digits"),
+        ]
     ),
-    
     "movieid": pa.Column(
         str
     ),
@@ -28,11 +32,24 @@ schema = pa.DataFrameSchema({
         ],
         coerce=True
     ),
-    
     "watch_duration_minutes": pa.Column(
         int
     )
-})
+    },
+    # Add DataFrame-level checks for duplicates
+    checks=[
+        # Check for exact duplicate rows
+        pa.Check(
+            lambda df: ~df.duplicated().any(),
+            error="Found exact duplicate rows"
+        ),
+        # Check for duplicate user-movie combinations
+        pa.Check(
+            lambda df: ~df.duplicated(subset=['userid', 'movieid']).any(),
+            error="Found duplicate ratings (same user rating same movie multiple times)"
+        )
+    ]
+)
 
 # point the path to the data
 def retrive_movie_ratings(path: Path) -> pd.DataFrame:
